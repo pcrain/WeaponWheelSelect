@@ -11,7 +11,7 @@ namespace RadialGunSelect
     public class Module : ETGModule
     {
         public static readonly string MOD_NAME = "Weapon Wheel Select"; // referred to as RadialGunSelect internally
-        public static readonly string VERSION = "1.0.0";
+        public static readonly string VERSION = "1.0.1";
 
         public override void Init()
         {

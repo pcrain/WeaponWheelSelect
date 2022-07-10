@@ -22,12 +22,6 @@ namespace RadialGunSelect
         tk2dSprite noAmmoIcon;
         tk2dSprite[] gunOutlineSprites;
 
-        public float size { get { return material.GetFloat("_Resolution"); } set { material.SetFloat("_Resolution", value); } }
-        public float rotation { get { return material.GetFloat("_Rotation"); } set { material.SetFloat("_Rotation", value); } }
-        public float angle { get { return material.GetFloat("_Angle"); } set { material.SetFloat("_Angle", value); } }
-        public Color color { get { return material.GetColor("_Color"); } set { material.SetColor("_Color", value); } }
-        public Color outlineColor { get { return material.GetColor("_OutlineColor"); } set { material.SetColor("_OutlineColor", value); } }
-
         static Color unhoveredOutlineColor = new Color(96 / 255f, 96 / 255f, 101 / 255f);
         static Color unhoveredFillColor = Color.black.WithAlpha(0.5f);
         static Color hoveredOutlineColor = Color.white;
@@ -105,7 +99,7 @@ namespace RadialGunSelect
         public void Update()
         {
             // rescale segment
-            renderer.transform.localScale = GUIManager.PixelsToUnits() * 3f * size * Vector2.one;
+            renderer.transform.localScale = GUIManager.PixelsToUnits() * 3f * material.GetFloat("_Resolution") * Vector2.one;
 
             // move gun
             GameUIAmmoController ammoController = UIRoot.ammoControllers[0];
@@ -114,7 +108,7 @@ namespace RadialGunSelect
                 foreach (var outlineSprite in SpriteOutlineManager.GetOutlineSprites(gunSprite))
                     outlineSprite.scale = gunSprite.scale;
             var gunOffset = ammoController.GetOffsetVectorForGun(originalGun, false);
-            var adjustedRot = (-rotation - 90) * Mathf.Deg2Rad;
+            var adjustedRot = (-material.GetFloat("_Rotation") - 90) * Mathf.Deg2Rad;
             var segmentWidth = renderer.transform.localScale.x / 2f;
             var pos = new Vector3(Mathf.Sin(adjustedRot), Mathf.Cos(adjustedRot)) * 0.75f * segmentWidth;
             gunContainer.localPosition = pos;
@@ -130,11 +124,11 @@ namespace RadialGunSelect
         {
             //color = hovered ? hoveredFillColor : unhoveredFillColor;
             var oCol = hovered ? hoveredOutlineColor : unhoveredOutlineColor;
-            outlineColor = oCol;
+            material.SetColor("_OutlineColor", oCol);
 
             if (gunOutlineSprites != null)
                 foreach(var outlineSprite in SpriteOutlineManager.GetOutlineSprites(gunSprite))
-                    outlineSprite.renderer.material.SetColor("_OverrideColor", outlineColor);
+                    outlineSprite.renderer.material.SetColor("_OverrideColor", oCol);
         }
     }
 }
