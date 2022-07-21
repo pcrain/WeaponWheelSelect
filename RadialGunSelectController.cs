@@ -181,7 +181,7 @@ namespace RadialGunSelect
 					segments[hoveredIndex].SetHovered(false);
 					segments[targetIndex].SetHovered(true);
 					hoveredIndex = targetIndex;
-					ammoLabel.Text = playerGuns[targetIndex].InfiniteAmmo ? "" : playerGuns[targetIndex].ammo + "/" + playerGuns[targetIndex].GetBaseMaxAmmo();
+					ammoLabel.Text = playerGuns[targetIndex].InfiniteAmmo ? "" : playerGuns[targetIndex].ammo + "/" + playerGuns[targetIndex].AdjustedMaxAmmo;
 				}
 
 				// run update
