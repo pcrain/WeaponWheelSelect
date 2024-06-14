@@ -8,7 +8,6 @@ namespace RadialGunSelect
 {
     public class RadialSegment
     {
-        private GameUIRoot UIRoot => GameUIRoot.Instance;
         private dfGUIManager GUIManager;
         private Transform container;
         private MeshRenderer renderer;
@@ -16,7 +15,6 @@ namespace RadialGunSelect
         private Gun originalGun;
         private Transform gunContainer;
         private tk2dClippedSprite gunSprite;
-        private tk2dSprite noAmmoIcon;
         // private tk2dSprite[] gunOutlineSprites;
         private float resolution;
         private float rotation;
@@ -33,7 +31,7 @@ namespace RadialGunSelect
 
         public RadialSegment(float size, float angle, float rotation)
         {
-            GUIManager = UIRoot.m_manager;
+            GUIManager = GameUIRoot.Instance.m_manager;
 
             container = new GameObject("SegmentContainer").transform;
             container.parent = GUIManager.transform;
@@ -85,7 +83,7 @@ namespace RadialGunSelect
             if (gun.CurrentAmmo == 0)
             {
                 gunSprite.renderer.material.SetFloat("_Saturation", 0f);
-                noAmmoIcon = ((GameObject)UnityEngine.Object.Instantiate(BraveResources.Load("Global Prefabs/NoAmmoIcon", ".prefab"))).GetComponent<tk2dSprite>();
+                tk2dSprite noAmmoIcon = ((GameObject)UnityEngine.Object.Instantiate(BraveResources.Load("Global Prefabs/NoAmmoIcon", ".prefab"))).GetComponent<tk2dSprite>();
                 noAmmoIcon = tk2dBaseSprite.AddComponent<tk2dSprite>(noAmmoIcon.gameObject, noAmmoIcon.Collection, noAmmoIcon.spriteId);
                 noAmmoIcon.name = "NoAmmoIcon";
                 noAmmoIcon.transform.parent = gunContainer;
@@ -105,14 +103,13 @@ namespace RadialGunSelect
 
         public void Rescale(float guiScale, float dfScale)
         {
-            // rescale segment
             Vector2 newScale = guiScale * 3f * this.resolution * Vector2.one;
             renderer.transform.localScale = newScale;
             gunSprite.scale = dfScale * Vector3.one;
             // if (gunOutlineSprites != null)
             //     foreach (var outlineSprite in gunOutlineSprites)
             //         outlineSprite.scale = gunSprite.scale;
-            gunSprite.transform.localPosition = UIRoot.ammoControllers[0].GetOffsetVectorForGun(originalGun, false);
+            gunSprite.transform.localPosition = GameUIRoot.Instance.ammoControllers[0].GetOffsetVectorForGun(originalGun, false);
             gunContainer.localPosition = newScale.x * this.basePos; // move gun
         }
 
@@ -125,7 +122,6 @@ namespace RadialGunSelect
         {
             var oCol = hovered ? hoveredOutlineColor : unhoveredOutlineColor;
             material.SetColor("_OutlineColor", oCol);
-
             // if (gunOutlineSprites != null)
             //     foreach(var outlineSprite in gunOutlineSprites)
             //         outlineSprite.renderer.material.SetColor("_OverrideColor", oCol);
