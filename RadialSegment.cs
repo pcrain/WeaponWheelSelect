@@ -28,16 +28,9 @@ namespace RadialGunSelect
         static readonly Color hoveredFillColor = Color.gray.WithAlpha(0.5f);
         static readonly Color innerColor = Color.black.WithAlpha(0.5f);
         static readonly Color outerColor = new Color(96/255f,96/255f,101/255f);
-        // static readonly Color unhoveredOutlineColor = Color.yellow;
-        // static readonly Color unhoveredFillColor = Color.green;
-        // static readonly Color hoveredOutlineColor = Color.cyan;
-        // static readonly Color hoveredFillColor = Color.magenta;
-        // static readonly Color innerColor = Color.red;
-        // static readonly Color outerColor = Color.blue;
 
         const float _BOUND_ADJ = 0.5f; // center coords are (0.5, 0.5) instead of (0.0, 0.0)
 
-        static int numSegmentsCreated = 0;
         public RadialSegment(float size, float angle, float rotation)
         {
             GUIManager = UIRoot.GetObject("m_manager") as dfGUIManager;
@@ -70,8 +63,6 @@ namespace RadialGunSelect
             material.SetFloat("_HighBound", 1.0f * _BOUND_ADJ);
 
             container.gameObject.SetLayerRecursively(LayerMask.NameToLayer("GUI"));
-            ++numSegmentsCreated;
-            ETGModConsole.Log($"created segment # {numSegmentsCreated} with size {size}, angle {angle}, and rotation {rotation}");
         }
 
         public void AssignGun(Gun gun)
@@ -103,11 +94,11 @@ namespace RadialGunSelect
                 noAmmoIcon.scale = gunSprite.scale;
                 noAmmoIcon.ignoresTiltworldDepth = true;
             }
-            else
-            {
-                SpriteOutlineManager.AddOutlineToSprite<tk2dSprite>(gunSprite, Color.white);
-                gunOutlineSprites = SpriteOutlineManager.GetOutlineSprites(gunSprite);
-            }
+            // else
+            // {
+            //     SpriteOutlineManager.AddOutlineToSprite<tk2dSprite>(gunSprite, Color.white);
+            //     gunOutlineSprites = SpriteOutlineManager.GetOutlineSprites(gunSprite);
+            // }
             gunContainer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("GUI"));
 
         }
@@ -118,9 +109,9 @@ namespace RadialGunSelect
             Vector2 newScale = guiScale * 3f * this.resolution * Vector2.one;
             renderer.transform.localScale = newScale;
             gunSprite.scale = dfScale * Vector3.one;
-            if (gunOutlineSprites != null)
-                foreach (var outlineSprite in SpriteOutlineManager.GetOutlineSprites(gunSprite))
-                    outlineSprite.scale = gunSprite.scale;
+            // if (gunOutlineSprites != null)
+            //     foreach (var outlineSprite in gunOutlineSprites)
+            //         outlineSprite.scale = gunSprite.scale;
             gunSprite.transform.localPosition = UIRoot.ammoControllers[0].GetOffsetVectorForGun(originalGun, false);
             gunContainer.localPosition = newScale.x * this.basePos; // move gun
         }
@@ -135,9 +126,9 @@ namespace RadialGunSelect
             var oCol = hovered ? hoveredOutlineColor : unhoveredOutlineColor;
             material.SetColor("_OutlineColor", oCol);
 
-            if (gunOutlineSprites != null)
-                foreach(var outlineSprite in SpriteOutlineManager.GetOutlineSprites(gunSprite))
-                    outlineSprite.renderer.material.SetColor("_OverrideColor", oCol);
+            // if (gunOutlineSprites != null)
+            //     foreach(var outlineSprite in gunOutlineSprites)
+            //         outlineSprite.renderer.material.SetColor("_OverrideColor", oCol);
         }
     }
 }
