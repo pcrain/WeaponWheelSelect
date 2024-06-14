@@ -6,19 +6,32 @@ using System.Reflection;
 using UnityEngine;
 using SGUI;
 
+using BepInEx;
+// using UnityEngine;
+// using UnityEngine.UI;
+// using MonoMod.RuntimeDetour;
+// using MonoMod.Cil;
+// using Mono.Cecil.Cil; //Instruction
+// using SGUI;
+// using FullSerializer;
+// using HarmonyLib;
+
 namespace RadialGunSelect
 {
-    public class Module : ETGModule
+    [BepInPlugin(Module.MOD_GUID, Module.MOD_NAME, Module.VERSION)]
+    [BepInDependency(ETGModMainBehaviour.GUID)]
+    public class Module : BaseUnityPlugin
     {
-        public static readonly string MOD_NAME = "Weapon Wheel Select"; // referred to as RadialGunSelect internally
-        public static readonly string VERSION = "1.0.1";
+        public const string MOD_GUID = "pretzel.etg.weaponwheel";
+        public const string MOD_NAME = "Weapon Wheel Select"; // referred to as RadialGunSelect internally
+        public const string VERSION = "2.0.0";
 
-        public override void Init()
+        public void Start()
         {
-            
+            ETGModMainBehaviour.WaitForGameManagerStart(GMStart);
         }
 
-        public override void Start()
+        public void GMStart(GameManager manager)
         {
             try
             {
@@ -32,11 +45,6 @@ namespace RadialGunSelect
             {
                 MorphUtils.LogError($"{MOD_NAME} v{VERSION} failed to initialize!", e);
             }
-        }
-
-        public override void Exit()
-        {
-
         }
     }
 }
