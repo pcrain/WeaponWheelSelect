@@ -18,12 +18,6 @@ namespace RadialGunSelect
             // add hooks
             AddHook(typeof(GameUIRoot), "HandleMetalGearGunSelect");
 
-            // make fields public
-            PublicizeField(typeof(GameUIRoot), "m_metalGearGunSelectActive");
-            PublicizeField(typeof(GameUIRoot), "additionalGunBoxesSecondary");
-            PublicizeField(typeof(GameUIRoot), "additionalGunBoxes");
-            PublicizeField(typeof(GameUIRoot), "m_manager");
-
             // make methods public
             PublicizeMethod(typeof(GameUIRoot), "HandlePauseInventoryFolding");
             PublicizeMethod(typeof(GameUIRoot), "AssignClippedSpriteFadeFractions");
@@ -45,12 +39,6 @@ namespace RadialGunSelect
         {
             PublicizeMember(type, methodName);
             memberInfoDict[type][methodName] = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
-        }
-
-        public static void PublicizeField(Type type, string fieldName)
-        {
-            PublicizeMember(type, fieldName);
-            memberInfoDict[type][fieldName] = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         // GETTERS AND SETTERS

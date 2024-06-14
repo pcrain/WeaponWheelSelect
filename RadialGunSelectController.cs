@@ -30,7 +30,7 @@ namespace RadialGunSelect
         public static IEnumerator HandleRadialGunSelect(PlayerController targetPlayer, int numToL)
         {
             GameUIRoot UIRoot = GameUIRoot.Instance;
-            dfGUIManager GUIManager = UIRoot.GetObject("m_manager") as dfGUIManager;
+            dfGUIManager GUIManager = UIRoot.m_manager;
 
             GameUIAmmoController ammoController = UIRoot.ammoControllers[0];
             if (GameManager.Instance.CurrentGameType == GameManager.GameType.COOP_2_PLAYER)
@@ -55,7 +55,7 @@ namespace RadialGunSelect
             UIRoot.ClearGunName(targetPlayer.IsPrimaryPlayer);
             targetPlayer.SetInputOverride("metal gear");
             BraveTime.RegisterTimeScaleMultiplier(0.05f, UIRoot.gameObject);
-            UIRoot.SetValue("m_metalGearGunSelectActive", true);
+            UIRoot.m_metalGearGunSelectActive = true;
             Tribool gunSelectPhase = Tribool.Unready;
             GunInventory playerInventory = targetPlayer.inventory;
             List<Gun> playerGuns = playerInventory.AllGuns;
@@ -63,7 +63,7 @@ namespace RadialGunSelect
             // no guns
             if (playerGuns.Count <= 1)
             {
-                UIRoot.SetValue("m_metalGearGunSelectActive", false);
+                UIRoot.m_metalGearGunSelectActive = false;
                 yield break;
             }
 
@@ -78,14 +78,14 @@ namespace RadialGunSelect
             float cachedGuiScale = 0.0f;
 
             // LOOP
-            while (UIRoot.GetBool("m_metalGearGunSelectActive"))
+            while (UIRoot.m_metalGearGunSelectActive)
             {
                 Pixelator.Instance.fade = Mathf.Lerp(1f, 0.5f, totalTimeMetalGeared * 8f);
 
                 // kill if anything is preventing select
                 if ((!inputInstance.ActiveActions.GunQuickEquipAction.IsPressed && !GameManager.Instance.PrimaryPlayer.ForceMetalGearMenu) || GameManager.IsBossIntro || GameManager.Instance.IsPaused || GameManager.Instance.IsLoadingLevel)
                 {
-                    UIRoot.SetValue("m_metalGearGunSelectActive", false);
+                    UIRoot.m_metalGearGunSelectActive = false;
                     break;
                 }
 
@@ -100,7 +100,7 @@ namespace RadialGunSelect
                     int currentGunIndex = playerGuns.IndexOf(targetPlayer.CurrentGun);
                     hoveredIndex = currentGunIndex;
 
-                    dfGUIManager manager = UIRoot.GetObject("m_manager") as dfGUIManager;
+                    dfGUIManager manager = UIRoot.m_manager;
 
                     int selectedGunIndex = playerGuns.IndexOf(targetPlayer.CurrentGun);
 
@@ -227,7 +227,7 @@ namespace RadialGunSelect
             Pixelator.Instance.fade = 1f;
             BraveTime.ClearMultiplier(UIRoot.gameObject);
             targetPlayer.ClearInputOverride("metal gear");
-            UIRoot.SetValue("m_metalGearGunSelectActive", false);
+            UIRoot.m_metalGearGunSelectActive = false;
 
             if (totalGunShift == 0 && totalTimeMetalGeared < 0.005f)
                 targetPlayer.DoQuickEquip();
@@ -286,10 +286,10 @@ namespace RadialGunSelect
             UIRoot.ClearGunName(targetPlayer.IsPrimaryPlayer);
             targetPlayer.SetInputOverride("metal gear");
             BraveTime.RegisterTimeScaleMultiplier(0.05f, UIRoot.gameObject);
-            UIRoot.SetValue("m_metalGearGunSelectActive", true);
+            UIRoot.m_metalGearGunSelectActive = true;
             Tribool gunSelectPhase = Tribool.Unready;
-            var additionalGunBoxesSecondary = (List<dfSprite>)UIRoot.GetObject("additionalGunBoxesSecondary");
-            var additionalGunBoxes = (List<dfSprite>)UIRoot.GetObject("additionalGunBoxes");
+            List<dfSprite> additionalGunBoxesSecondary = UIRoot.additionalGunBoxesSecondary;
+            List<dfSprite> additionalGunBoxes = UIRoot.additionalGunBoxes;
             List<dfSprite> additionalGunFrames = (!targetPlayer.IsPrimaryPlayer) ? additionalGunBoxesSecondary : additionalGunBoxes;
             GunInventory playerInventory = targetPlayer.inventory;
             List<Gun> playerGuns = playerInventory.AllGuns;
@@ -298,7 +298,7 @@ namespace RadialGunSelect
             // no guns
             if (playerGuns.Count <= 1)
             {
-                UIRoot.SetValue("m_metalGearGunSelectActive", false);
+                UIRoot.m_metalGearGunSelectActive = false;
                 yield break;
             }
 
@@ -321,14 +321,14 @@ namespace RadialGunSelect
             float ignoreStickTimer = 0f;
             bool isLeftAligned = targetPlayer.IsPrimaryPlayer && GameManager.Instance.CurrentGameType == GameManager.GameType.COOP_2_PLAYER;
 
-            while (UIRoot.GetBool("m_metalGearGunSelectActive"))
+            while (UIRoot.m_metalGearGunSelectActive)
             {
                 Pixelator.Instance.fade = Mathf.Lerp(1f, 0.5f, totalTimeMetalGeared * 8f);
 
                 // kill if anything is preventing select
                 if ((!inputInstance.ActiveActions.GunQuickEquipAction.IsPressed && !GameManager.Instance.PrimaryPlayer.ForceMetalGearMenu) || GameManager.IsBossIntro || GameManager.Instance.IsPaused || GameManager.Instance.IsLoadingLevel)
                 {
-                    UIRoot.SetValue("m_metalGearGunSelectActive", false);
+                    UIRoot.m_metalGearGunSelectActive = false;
                     break;
                 }
 
@@ -598,7 +598,7 @@ namespace RadialGunSelect
             }
             BraveTime.ClearMultiplier(UIRoot.gameObject);
             targetPlayer.ClearInputOverride("metal gear");
-            UIRoot.SetValue("m_metalGearGunSelectActive", false);
+            UIRoot.m_metalGearGunSelectActive = false;
 
             if (totalGunShift == 0 && totalTimeMetalGeared < 0.005f)
                 targetPlayer.DoQuickEquip();

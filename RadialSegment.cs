@@ -17,7 +17,7 @@ namespace RadialGunSelect
         private Transform gunContainer;
         private tk2dClippedSprite gunSprite;
         private tk2dSprite noAmmoIcon;
-        private tk2dSprite[] gunOutlineSprites;
+        // private tk2dSprite[] gunOutlineSprites;
         private float resolution;
         private float rotation;
         private Vector3 basePos;
@@ -33,7 +33,7 @@ namespace RadialGunSelect
 
         public RadialSegment(float size, float angle, float rotation)
         {
-            GUIManager = UIRoot.GetObject("m_manager") as dfGUIManager;
+            GUIManager = UIRoot.m_manager;
 
             container = new GameObject("SegmentContainer").transform;
             container.parent = GUIManager.transform;
