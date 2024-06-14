@@ -19,7 +19,11 @@ namespace RadialGunSelect
         {
             // AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource("RadialGunSelect/AssetBundles/RadialGunSelect");
             // radialShader = assetBundle.LoadAsset<Shader>("RadialSegmentShader");
-            AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource("RadialGunSelect/AssetBundles/wwshaders");
+            string platform =
+                Application.platform == RuntimePlatform.LinuxPlayer ? "linux" :
+                Application.platform == RuntimePlatform.OSXPlayer ? "osx" : "windows";
+
+            AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource($"RadialGunSelect/AssetBundles/wwshaders-{platform}");
             radialShader = assetBundle.LoadAsset<Shader>("assets/weaponwheel.shader");
         }
 
