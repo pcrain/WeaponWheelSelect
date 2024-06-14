@@ -74,17 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RadialGunSelectController.cs" />
-    <Compile Include="Utils\APIs\ItemAPI\CompanionBuilder.cs" />
-    <Compile Include="Utils\APIs\ItemAPI\CustomSynergies.cs" />
-    <Compile Include="Utils\APIs\ItemAPI\FakePrefab\FakePrefab.cs" />
-    <Compile Include="Utils\APIs\ItemAPI\FakePrefab\FakePrefabHooks.cs" />
-    <Compile Include="Utils\APIs\ItemAPI\ItemBuilder.cs" />
-    <Compile Include="Utils\APIs\ItemAPI\ResourceExtractor.cs" />
-    <Compile Include="Utils\APIs\ItemAPI\SpriteBuilder.cs" />
-    <Compile Include="Utils\AssetsManager.cs" />
     <Compile Include="RadialSegment.cs" />
-    <Compile Include="Utils\SRainbowModifier.cs" />
-    <Compile Include="Utils\MorphUtils.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

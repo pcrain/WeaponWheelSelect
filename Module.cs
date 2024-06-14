@@ -5,15 +5,7 @@ using System.Text;
 using System.Reflection;
 using UnityEngine;
 using SGUI;
-
 using BepInEx;
-// using UnityEngine;
-// using UnityEngine.UI;
-// using MonoMod.RuntimeDetour;
-// using MonoMod.Cil;
-// using Mono.Cecil.Cil; //Instruction
-// using SGUI;
-// using FullSerializer;
 using HarmonyLib;
 
 namespace RadialGunSelect
@@ -37,11 +29,11 @@ namespace RadialGunSelect
             {
                 new Harmony(MOD_GUID).PatchAll();
                 RadialGunSelectController.Init();
-                MorphUtils.LogRainbow($"{MOD_NAME} v{VERSION} started successfully.");
+                ETGModConsole.Log($"<color=#8888BB>{MOD_NAME} v{VERSION} started successfully!</color>");
             }
             catch (Exception e)
             {
-                MorphUtils.LogError($"{MOD_NAME} v{VERSION} failed to initialize!", e);
+                ETGModConsole.Log($"<color=#FF0000>{MOD_NAME} v{VERSION} failed to initialize!\n{e}</color>");
             }
         }
     }

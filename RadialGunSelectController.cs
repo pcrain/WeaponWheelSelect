@@ -7,6 +7,8 @@ using tk2dRuntime;
 using System.Collections.Generic;
 using InControl;
 using HarmonyLib;
+using System.IO;
+using System.Reflection;
 
 namespace RadialGunSelect
 {
@@ -24,8 +26,25 @@ namespace RadialGunSelect
                 Application.platform == RuntimePlatform.LinuxPlayer ? "linux" :
                 Application.platform == RuntimePlatform.OSXPlayer ? "osx" : "windows";
 
-            AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource($"RadialGunSelect/AssetBundles/wwshaders-{platform}");
+            AssetBundle assetBundle = LoadAssetBundleFromResource($"RadialGunSelect/AssetBundles/wwshaders-{platform}");
             radialShader = assetBundle.LoadAsset<Shader>("assets/weaponwheel.shader");
+        }
+
+        public static AssetBundle LoadAssetBundleFromResource(string filePath)
+        {
+            filePath = filePath.Replace("/", ".");
+            filePath = filePath.Replace("\\", ".");
+            using (Stream manifestResourceStream = Assembly.GetCallingAssembly().GetManifestResourceStream(filePath))
+            {
+                if (manifestResourceStream != null)
+                {
+                    byte[] array = new byte[manifestResourceStream.Length];
+                    manifestResourceStream.Read(array, 0, array.Length);
+                    return AssetBundle.LoadFromMemory(array);
+                }
+            }
+            ETGModConsole.Log("No bytes found in " + filePath, false);
+            return null;
         }
 
         [HarmonyPatch(typeof(GameUIRoot), nameof(GameUIRoot.HandleMetalGearGunSelect)/*, MethodType.Enumerator*/)]
@@ -152,7 +171,7 @@ namespace RadialGunSelect
                 mousePosition = GetCenteredMousePosition();
 
                 var mouseAngle = Mathf.Atan2(mousePosition.x, mousePosition.y) * Mathf.Rad2Deg;
-                mouseAngle = MorphUtils.Mod(mouseAngle, 360);
+                mouseAngle = FMod(mouseAngle, 360);
                 var mouseDistance = Vector2.Distance(Vector2.zero, mousePosition);
 
                 var segmentWidth = GUIManager.UIScale * 3f * 201 / 2f;
@@ -161,7 +180,7 @@ namespace RadialGunSelect
                     if (mouseDistance > segmentWidth * 0.25f)
                     {
                         var anglePerSegment = 360 / segments.Length;
-                        targetIndex = Mathf.FloorToInt(MorphUtils.Mod((mouseAngle + 90) / anglePerSegment + 0.5f, segments.Length));
+                        targetIndex = Mathf.FloorToInt(FMod((mouseAngle + 90) / anglePerSegment + 0.5f, segments.Length));
                     }
                     lastMousePosition = mousePosition;
                 }
@@ -183,7 +202,7 @@ namespace RadialGunSelect
                         if (Vector2.Distance(Vector2.zero, currentDevice.LeftStick.Value) >= 0.4f)
                         {
                             var anglePerSegment = 360 / segments.Length;
-                            targetIndex = Mathf.FloorToInt(MorphUtils.Mod((-currentDevice.LeftStick.Angle - 90) / anglePerSegment + 0.5f, segments.Length));
+                            targetIndex = Mathf.FloorToInt(FMod((-currentDevice.LeftStick.Angle - 90) / anglePerSegment + 0.5f, segments.Length));
                         }
                     }
                     else
@@ -193,7 +212,7 @@ namespace RadialGunSelect
                 }
 
                 // apply hover
-                targetIndex = (int)MorphUtils.Mod(targetIndex, segments.Length);
+                targetIndex = (int)FMod(targetIndex, segments.Length);
                 if (hoveredIndex != targetIndex)
                 {
                     segments[hoveredIndex].SetHovered(false);
@@ -254,6 +273,11 @@ namespace RadialGunSelect
             mousePosition.y = (float)Screen.height - mousePosition.y;
             mousePosition = mousePosition - screenCenter;
             return mousePosition;
+        }
+
+        static float FMod(float x, float m)
+        {
+            return (x % m + m) % m;
         }
 
         // ---------------------------------------------------------------- \\
