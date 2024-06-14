@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Text;
-using UnityEngine;
+﻿using System.Collections;
 using System.Collections.Generic;
-using InControl;
-using HarmonyLib;
 using System.IO;
 using System.Reflection;
+using HarmonyLib;
+using UnityEngine;
+using InControl;
 
 namespace RadialGunSelect
 {
@@ -20,14 +18,12 @@ namespace RadialGunSelect
             string platform =
                 Application.platform == RuntimePlatform.LinuxPlayer ? "linux" :
                 Application.platform == RuntimePlatform.OSXPlayer ? "osx" : "windows";
-            AssetBundle assetBundle = LoadAssetBundleFromResource($"RadialGunSelect/AssetBundles/wwshaders-{platform}");
+            AssetBundle assetBundle = LoadAssetBundleFromResource($"RadialGunSelect.AssetBundles.wwshaders-{platform}");
             radialShader = assetBundle.LoadAsset<Shader>("assets/weaponwheel.shader");
         }
 
-        public static AssetBundle LoadAssetBundleFromResource(string filePath)
+        private static AssetBundle LoadAssetBundleFromResource(string filePath)
         {
-            filePath = filePath.Replace("/", ".");
-            filePath = filePath.Replace("\\", ".");
             using (Stream manifestResourceStream = Assembly.GetCallingAssembly().GetManifestResourceStream(filePath))
             {
                 if (manifestResourceStream != null)
@@ -41,14 +37,14 @@ namespace RadialGunSelect
             return null;
         }
 
-        static Vector2 GetCenteredMousePosition()
+        private static Vector2 GetCenteredMousePosition()
         {
             Vector2 mousePosition = BraveInput.GetInstanceForPlayer(0).MousePosition;
             mousePosition.y = (float)Screen.height - mousePosition.y;
             return mousePosition - Screen.safeArea.center;
         }
 
-        [HarmonyPatch(typeof(GameUIRoot), nameof(GameUIRoot.HandleMetalGearGunSelect)/*, MethodType.Enumerator*/)]
+        [HarmonyPatch(typeof(GameUIRoot), nameof(GameUIRoot.HandleMetalGearGunSelect))]
         private class WeaponWheelPatch
         {
             private static bool Prefix(GameUIRoot __instance, PlayerController targetPlayer, int numToL, ref IEnumerator __result)
@@ -58,7 +54,7 @@ namespace RadialGunSelect
             }
         }
 
-        public static IEnumerator HandleRadialGunSelect(PlayerController targetPlayer, int numToL)
+        private static IEnumerator HandleRadialGunSelect(PlayerController targetPlayer, int numToL)
         {
             GameUIRoot UIRoot = GameUIRoot.Instance;
             dfGUIManager GUIManager = UIRoot.m_manager;
@@ -146,7 +142,7 @@ namespace RadialGunSelect
                     }
 
                     ammoLabel.transform.parent = GUIManager.transform;
-                    ammoLabel.Size = (Vector2.one * 500).WithY(64);  //TODO: make this work for co-op
+                    ammoLabel.Size = new Vector2(500, 64);  //TODO: make this work for co-op
                     ammoLabel.TextScale *= 3;
                     ammoLabel.TextAlignment = TextAlignment.Center;
                     ammoLabel.BackgroundColor = Color.blue.WithAlpha(0.5f);

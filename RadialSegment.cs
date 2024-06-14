@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace RadialGunSelect
 {
-    public class RadialSegment
+    internal class RadialSegment
     {
+        private static readonly Color unhoveredOutlineColor = new Color(96 / 255f, 96 / 255f, 101 / 255f);
+        private static readonly Color hoveredOutlineColor = Color.white;
+        private static readonly Color innerColor = Color.black.WithAlpha(0.5f);
+
         private Transform container;
         private MeshRenderer renderer;
         private Transform gunContainer;
@@ -14,14 +15,7 @@ namespace RadialGunSelect
         private float resolution;
         private Vector3 basePos;
 
-        private static readonly Color unhoveredOutlineColor = new Color(96 / 255f, 96 / 255f, 101 / 255f);
-        private static readonly Color unhoveredFillColor = Color.black.WithAlpha(0.5f);
-        private static readonly Color hoveredOutlineColor = Color.white;
-        private static readonly Color hoveredFillColor = Color.gray.WithAlpha(0.5f);
-        private static readonly Color innerColor = Color.black.WithAlpha(0.5f);
-        private static readonly Color outerColor = new Color(96/255f,96/255f,101/255f);
-
-        public RadialSegment(float size, float angle, float rotation)
+        internal RadialSegment(float size, float angle, float rotation)
         {
             dfGUIManager GUIManager = GameUIRoot.Instance.m_manager;
 
@@ -30,9 +24,9 @@ namespace RadialGunSelect
             container.localPosition = Vector3.zero;
             container.SetAsFirstSibling();
 
-            this.resolution = size;
             float adjustedRot = (-rotation - 90) * Mathf.Deg2Rad;
             this.basePos = new Vector3(0.375f * Mathf.Sin(adjustedRot), 0.375f * Mathf.Cos(adjustedRot));
+            this.resolution = size;
 
             GameObject segGO = GameObject.CreatePrimitive(PrimitiveType.Quad);
             segGO.transform.parent = container;
@@ -44,7 +38,7 @@ namespace RadialGunSelect
             material.SetFloat("_Angle", angle);
             material.SetFloat("_Rotation", rotation);
             material.SetColor("_Color", innerColor);
-            material.SetColor("_OutlineColor", outerColor);
+            material.SetColor("_OutlineColor", unhoveredOutlineColor);
             material.SetFloat("_OutlineWidth", 1f);
             material.SetFloat("_LowBound", 0.25f);
             material.SetFloat("_HighBound", 0.5f);
@@ -56,7 +50,7 @@ namespace RadialGunSelect
             container.gameObject.SetLayerRecursively(LayerMask.NameToLayer("GUI"));
         }
 
-        public void AssignGun(Gun gun, float dfScale)
+        internal void AssignGun(Gun gun, float dfScale)
         {
             tk2dBaseSprite originalGunSprite = gun.GetSprite();
 
@@ -77,8 +71,6 @@ namespace RadialGunSelect
             {
                 gunSprite.renderer.material.SetFloat("_Saturation", 0f);
                 tk2dSprite noAmmoIcon = ((GameObject)UnityEngine.Object.Instantiate(BraveResources.Load("Global Prefabs/NoAmmoIcon", ".prefab"))).GetComponent<tk2dSprite>();
-                noAmmoIcon = tk2dBaseSprite.AddComponent<tk2dSprite>(noAmmoIcon.gameObject, noAmmoIcon.Collection, noAmmoIcon.spriteId);
-                noAmmoIcon.name = "NoAmmoIcon";
                 noAmmoIcon.transform.parent = gunContainer;
                 noAmmoIcon.HeightOffGround = 2f;
                 noAmmoIcon.transform.position = Vector3.zero;
@@ -88,7 +80,7 @@ namespace RadialGunSelect
             gunContainer.gameObject.SetLayerRecursively(LayerMask.NameToLayer("GUI"));
         }
 
-        public void Rescale(float guiScale, float dfScale)
+        internal void Rescale(float guiScale, float dfScale)
         {
             Vector2 newScale = guiScale * 3f * this.resolution * Vector2.one;
             renderer.transform.localScale = newScale;
@@ -96,12 +88,12 @@ namespace RadialGunSelect
             gunContainer.localPosition = newScale.x * this.basePos; // move gun
         }
 
-        public void Destroy()
+        internal void Destroy()
         {
             GameObject.Destroy(container.gameObject);
         }
 
-        public void SetHovered(bool hovered)
+        internal void SetHovered(bool hovered)
         {
             renderer.material.SetColor("_OutlineColor", hovered ? hoveredOutlineColor : unhoveredOutlineColor);
         }
