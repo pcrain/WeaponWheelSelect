@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="Assembly-CSharp">
       <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/Assembly-CSharp.dll</HintPath>
     </Reference>
@@ -41,24 +47,11 @@
     <Reference Include="MonoMod.Utils">
       <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/MonoMod.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/UnityEngine.ImageConversionModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/UnityEngine.JSONSerializeModule.dll</HintPath>
     </Reference>
     <Reference Include="ModTheGungeonAPI">
       <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/ModTheGungeonAPI.dll</HintPath>
@@ -80,7 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-    <EmbeddedResource Include="AssetBundles\RadialGunSelect" />
     <EmbeddedResource Include="AssetBundles\wwshaders-linux" />
     <EmbeddedResource Include="AssetBundles\wwshaders-windows" />
     <EmbeddedResource Include="AssetBundles\wwshaders-osx" />

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using System.Text;
 using UnityEngine;
-using tk2dRuntime;
 using System.Collections.Generic;
 using InControl;
 using HarmonyLib;
@@ -15,19 +13,13 @@ namespace RadialGunSelect
     public static class RadialGunSelectController
     {
         private const int _SEGMENT_SIZE = 201;
-
-        public static Shader radialShader;
-        public static RadialSegment[] segments;
-        private static int hoveredIndex;
+        internal static Shader radialShader;
 
         public static void Init()
         {
-            // AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource("RadialGunSelect/AssetBundles/RadialGunSelect");
-            // radialShader = assetBundle.LoadAsset<Shader>("RadialSegmentShader");
             string platform =
                 Application.platform == RuntimePlatform.LinuxPlayer ? "linux" :
                 Application.platform == RuntimePlatform.OSXPlayer ? "osx" : "windows";
-
             AssetBundle assetBundle = LoadAssetBundleFromResource($"RadialGunSelect/AssetBundles/wwshaders-{platform}");
             radialShader = assetBundle.LoadAsset<Shader>("assets/weaponwheel.shader");
         }
@@ -47,6 +39,13 @@ namespace RadialGunSelect
             }
             ETGModConsole.Log("No bytes found in " + filePath, false);
             return null;
+        }
+
+        static Vector2 GetCenteredMousePosition()
+        {
+            Vector2 mousePosition = BraveInput.GetInstanceForPlayer(0).MousePosition;
+            mousePosition.y = (float)Screen.height - mousePosition.y;
+            return mousePosition - Screen.safeArea.center;
         }
 
         [HarmonyPatch(typeof(GameUIRoot), nameof(GameUIRoot.HandleMetalGearGunSelect)/*, MethodType.Enumerator*/)]
@@ -107,6 +106,8 @@ namespace RadialGunSelect
             Vector2 lastMousePosition = mousePosition;
             dfLabel ammoLabel = new GameObject("RadialGunSelectLabel").AddComponent<dfLabel>();
             float cachedGuiScale = 0.0f;
+            RadialSegment[] segments = new RadialSegment[playerGuns.Count];
+            int hoveredIndex = 0;
 
             // LOOP
             while (UIRoot.m_metalGearGunSelectActive)
@@ -129,18 +130,18 @@ namespace RadialGunSelect
 
                     // setup
                     hoveredIndex = playerGuns.IndexOf(targetPlayer.CurrentGun);
-                    segments = new RadialSegment[playerGuns.Count];
-                    var gap = playerGuns.Count > 20 ? 0 : playerGuns.Count > 15 ? 2 : playerGuns.Count > 10 ? 5 : 10;
+                    int gap = playerGuns.Count > 20 ? 0 : playerGuns.Count > 15 ? 2 : playerGuns.Count > 10 ? 5 : 10;
+                    float dfScale = GameUIUtility.GetCurrentTK2D_DFScale(GUIManager);
                     for (int i = 0; i < playerGuns.Count; i++)
                     {
                         // spawn segment
-                        var angle = 360f / playerGuns.Count();
-                        var rotation = i * angle;
-                        var segment = new RadialSegment(_SEGMENT_SIZE, angle - gap, rotation);
+                        float angle = 360f / playerGuns.Count;
+                        float rotation = i * angle;
+                        RadialSegment segment = new RadialSegment(_SEGMENT_SIZE, angle - gap, rotation);
                         segments[i] = segment;
 
                         // set gun to segment
-                        segment.AssignGun(playerGuns[i]);
+                        segment.AssignGun(playerGuns[i], dfScale);
                         segment.SetHovered(i == hoveredIndex);
                     }
 
@@ -162,13 +163,13 @@ namespace RadialGunSelect
                 InputDevice currentDevice = currentActions.Device;
                 bool gunUp = inputInstance.IsKeyboardAndMouse(true) && currentActions.GunUpAction.WasPressed;
                 bool gunDown = inputInstance.IsKeyboardAndMouse(true) && currentActions.GunDownAction.WasPressed;
-                var targetIndex = hoveredIndex;
+                int targetIndex = hoveredIndex;
 
                 mousePosition = GetCenteredMousePosition(); //TODO: make this work for co-op
 
                 float mouseAngle = BraveMathCollege.ClampAngle360(Mathf.Atan2(mousePosition.x, mousePosition.y) * Mathf.Rad2Deg);
 
-                var segmentWidth = GUIManager.UIScale * 3f * _SEGMENT_SIZE / 2f;
+                float segmentWidth = GUIManager.UIScale * 3f * _SEGMENT_SIZE / 2f;
                 if (Vector2.Distance(mousePosition, lastMousePosition) >= 4f)
                 {
                     if (mousePosition.magnitude > segmentWidth * 0.25f)
@@ -201,7 +202,7 @@ namespace RadialGunSelect
                 }
 
                 // apply hover
-                targetIndex = FMod(targetIndex, segments.Length);
+                targetIndex = (targetIndex + segments.Length) % segments.Length;
                 if (hoveredIndex != targetIndex)
                 {
                     segments[hoveredIndex].SetHovered(false);
@@ -216,7 +217,7 @@ namespace RadialGunSelect
                 {
                     cachedGuiScale = newGuiScale;
                     float dfScale = GameUIUtility.GetCurrentTK2D_DFScale(GUIManager);
-                    foreach (var seg in segments)
+                    foreach (RadialSegment seg in segments)
                         seg.Rescale(newGuiScale, dfScale);
                 }
 
@@ -239,7 +240,7 @@ namespace RadialGunSelect
             }
 
             // return everything to normal
-            foreach (var seg in segments)
+            foreach (RadialSegment seg in segments)
                 seg.Destroy();
 
             ammoLabel.Text = "";
@@ -253,20 +254,6 @@ namespace RadialGunSelect
 
             ammoController.GunAmmoCountLabel.IsVisible = true;
             yield break;
-        }
-
-        static Vector2 GetCenteredMousePosition()
-        {
-            var screenCenter = Screen.safeArea.center;
-            var mousePosition = BraveInput.GetInstanceForPlayer(0).MousePosition;
-            mousePosition.y = (float)Screen.height - mousePosition.y;
-            mousePosition = mousePosition - screenCenter;
-            return mousePosition;
-        }
-
-        static int FMod(int x, int m)
-        {
-            return (x % m + m) % m;
         }
     }
 }
