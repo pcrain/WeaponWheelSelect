@@ -8,25 +8,27 @@ namespace RadialGunSelect
 {
     public class RadialSegment
     {
-        GameUIRoot UIRoot => GameUIRoot.Instance;
-        dfGUIManager GUIManager;
+        private GameUIRoot UIRoot => GameUIRoot.Instance;
+        private dfGUIManager GUIManager;
+        private Transform container;
+        private MeshRenderer renderer;
+        private Material material;
+        private Gun originalGun;
+        private Transform gunContainer;
+        private tk2dClippedSprite gunSprite;
+        private tk2dSprite noAmmoIcon;
+        private tk2dSprite[] gunOutlineSprites;
+        private float resolution;
+        private float rotation;
 
-        Transform container;
+        static readonly Color unhoveredOutlineColor = new Color(96 / 255f, 96 / 255f, 101 / 255f);
+        static readonly Color unhoveredFillColor = Color.black.WithAlpha(0.5f);
+        static readonly Color hoveredOutlineColor = Color.white;
+        static readonly Color hoveredFillColor = Color.gray.WithAlpha(0.5f);
+        static readonly Color innerColor = Color.black.WithAlpha(0.5f);
+        static readonly Color outerColor = new Color(96/255f,96/255f,101/255f);
 
-        MeshRenderer renderer;
-        Material material;
-
-        Gun originalGun;
-        Transform gunContainer;
-        tk2dClippedSprite gunSprite;
-        tk2dSprite noAmmoIcon;
-        tk2dSprite[] gunOutlineSprites;
-
-        static Color unhoveredOutlineColor = new Color(96 / 255f, 96 / 255f, 101 / 255f);
-        static Color unhoveredFillColor = Color.black.WithAlpha(0.5f);
-        static Color hoveredOutlineColor = Color.white;
-        static Color hoveredFillColor = Color.gray.WithAlpha(0.5f);
-
+        static int numSegmentsCreated = 0;
         public RadialSegment(float size, float angle, float rotation)
         {
             GUIManager = UIRoot.GetObject("m_manager") as dfGUIManager;
@@ -36,8 +38,8 @@ namespace RadialGunSelect
             container.localPosition = Vector3.zero;
             container.SetAsFirstSibling();
 
-            Color innerColor = Color.black.WithAlpha(0.5f);
-            Color outerColor = new Color(96/255f,96/255f,101/255f);
+            this.resolution = size;
+            this.rotation = rotation;
 
             var segGO = GameObject.CreatePrimitive(PrimitiveType.Quad);
             segGO.transform.parent = container;
@@ -56,6 +58,8 @@ namespace RadialGunSelect
             material.SetFloat("_LowBound", 0.5f);
 
             container.gameObject.SetLayerRecursively(LayerMask.NameToLayer("GUI"));
+            ++numSegmentsCreated;
+            ETGModConsole.Log($"created segment # {numSegmentsCreated}");
         }
 
         public void AssignGun(Gun gun)
@@ -99,7 +103,7 @@ namespace RadialGunSelect
         public void Update()
         {
             // rescale segment
-            renderer.transform.localScale = GUIManager.PixelsToUnits() * 3f * material.GetFloat("_Resolution") * Vector2.one;
+            renderer.transform.localScale = GUIManager.PixelsToUnits() * 3f * this.resolution * Vector2.one;
 
             // move gun
             GameUIAmmoController ammoController = UIRoot.ammoControllers[0];
@@ -108,7 +112,7 @@ namespace RadialGunSelect
                 foreach (var outlineSprite in SpriteOutlineManager.GetOutlineSprites(gunSprite))
                     outlineSprite.scale = gunSprite.scale;
             var gunOffset = ammoController.GetOffsetVectorForGun(originalGun, false);
-            var adjustedRot = (-material.GetFloat("_Rotation") - 90) * Mathf.Deg2Rad;
+            var adjustedRot = (-this.rotation - 90) * Mathf.Deg2Rad;
             var segmentWidth = renderer.transform.localScale.x / 2f;
             var pos = new Vector3(Mathf.Sin(adjustedRot), Mathf.Cos(adjustedRot)) * 0.75f * segmentWidth;
             gunContainer.localPosition = pos;
@@ -122,7 +126,6 @@ namespace RadialGunSelect
 
         public void SetHovered(bool hovered)
         {
-            //color = hovered ? hoveredFillColor : unhoveredFillColor;
             var oCol = hovered ? hoveredOutlineColor : unhoveredOutlineColor;
             material.SetColor("_OutlineColor", oCol);
 

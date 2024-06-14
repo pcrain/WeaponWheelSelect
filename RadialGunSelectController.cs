@@ -19,6 +19,7 @@ namespace RadialGunSelect
         {
             AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource("RadialGunSelect/AssetBundles/RadialGunSelect");
             radialShader = assetBundle.LoadAsset<Shader>("RadialSegmentShader");
+            // radialShader = ShaderCache.Acquire("Brave/LitTk2dCustomFalloffTiltedCutoutEmissive");
         }
 
         public static IEnumerator HandleRadialGunSelect(PlayerController targetPlayer, int numToL)
