@@ -20,6 +20,7 @@ namespace RadialGunSelect
         private tk2dSprite[] gunOutlineSprites;
         private float resolution;
         private float rotation;
+        private Vector3 basePos;
 
         static readonly Color unhoveredOutlineColor = new Color(96 / 255f, 96 / 255f, 101 / 255f);
         static readonly Color unhoveredFillColor = Color.black.WithAlpha(0.5f);
@@ -27,6 +28,14 @@ namespace RadialGunSelect
         static readonly Color hoveredFillColor = Color.gray.WithAlpha(0.5f);
         static readonly Color innerColor = Color.black.WithAlpha(0.5f);
         static readonly Color outerColor = new Color(96/255f,96/255f,101/255f);
+        // static readonly Color unhoveredOutlineColor = Color.yellow;
+        // static readonly Color unhoveredFillColor = Color.green;
+        // static readonly Color hoveredOutlineColor = Color.cyan;
+        // static readonly Color hoveredFillColor = Color.magenta;
+        // static readonly Color innerColor = Color.red;
+        // static readonly Color outerColor = Color.blue;
+
+        const float _BOUND_ADJ = 0.5f; // center coords are (0.5, 0.5) instead of (0.0, 0.0)
 
         static int numSegmentsCreated = 0;
         public RadialSegment(float size, float angle, float rotation)
@@ -40,6 +49,8 @@ namespace RadialGunSelect
 
             this.resolution = size;
             this.rotation = rotation;
+            float adjustedRot = (-this.rotation - 90) * Mathf.Deg2Rad;
+            this.basePos = new Vector3(0.375f * Mathf.Sin(adjustedRot), 0.375f * Mathf.Cos(adjustedRot));
 
             var segGO = GameObject.CreatePrimitive(PrimitiveType.Quad);
             segGO.transform.parent = container;
@@ -55,11 +66,12 @@ namespace RadialGunSelect
             material.SetColor("_Color", innerColor);
             material.SetColor("_OutlineColor", outerColor);
             material.SetFloat("_OutlineWidth", 1f);
-            material.SetFloat("_LowBound", 0.5f);
+            material.SetFloat("_LowBound", 0.5f * _BOUND_ADJ);
+            material.SetFloat("_HighBound", 1.0f * _BOUND_ADJ);
 
             container.gameObject.SetLayerRecursively(LayerMask.NameToLayer("GUI"));
             ++numSegmentsCreated;
-            ETGModConsole.Log($"created segment # {numSegmentsCreated}");
+            ETGModConsole.Log($"created segment # {numSegmentsCreated} with size {size}, angle {angle}, and rotation {rotation}");
         }
 
         public void AssignGun(Gun gun)
@@ -100,23 +112,17 @@ namespace RadialGunSelect
 
         }
 
-        public void Update()
+        public void Rescale(float guiScale, float dfScale)
         {
             // rescale segment
-            renderer.transform.localScale = GUIManager.PixelsToUnits() * 3f * this.resolution * Vector2.one;
-
-            // move gun
-            GameUIAmmoController ammoController = UIRoot.ammoControllers[0];
-            gunSprite.scale = GameUIUtility.GetCurrentTK2D_DFScale(GUIManager) * Vector3.one;
+            Vector2 newScale = guiScale * 3f * this.resolution * Vector2.one;
+            renderer.transform.localScale = newScale;
+            gunSprite.scale = dfScale * Vector3.one;
             if (gunOutlineSprites != null)
                 foreach (var outlineSprite in SpriteOutlineManager.GetOutlineSprites(gunSprite))
                     outlineSprite.scale = gunSprite.scale;
-            var gunOffset = ammoController.GetOffsetVectorForGun(originalGun, false);
-            var adjustedRot = (-this.rotation - 90) * Mathf.Deg2Rad;
-            var segmentWidth = renderer.transform.localScale.x / 2f;
-            var pos = new Vector3(Mathf.Sin(adjustedRot), Mathf.Cos(adjustedRot)) * 0.75f * segmentWidth;
-            gunContainer.localPosition = pos;
-            gunSprite.transform.localPosition = gunOffset;
+            gunSprite.transform.localPosition = UIRoot.ammoControllers[0].GetOffsetVectorForGun(originalGun, false);
+            gunContainer.localPosition = newScale.x * this.basePos; // move gun
         }
 
         public void Destroy()

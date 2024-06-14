@@ -89,6 +89,7 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <EmbeddedResource Include="AssetBundles\RadialGunSelect" />
+    <EmbeddedResource Include="AssetBundles\wwshaders" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

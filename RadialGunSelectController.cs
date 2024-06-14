@@ -17,9 +17,10 @@ namespace RadialGunSelect
 
         public static void Init()
         {
-            AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource("RadialGunSelect/AssetBundles/RadialGunSelect");
-            radialShader = assetBundle.LoadAsset<Shader>("RadialSegmentShader");
-            // radialShader = ShaderCache.Acquire("Brave/LitTk2dCustomFalloffTiltedCutoutEmissive");
+            // AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource("RadialGunSelect/AssetBundles/RadialGunSelect");
+            // radialShader = assetBundle.LoadAsset<Shader>("RadialSegmentShader");
+            AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource("RadialGunSelect/AssetBundles/wwshaders");
+            radialShader = assetBundle.LoadAsset<Shader>("assets/weaponwheel.shader");
         }
 
         public static IEnumerator HandleRadialGunSelect(PlayerController targetPlayer, int numToL)
@@ -70,6 +71,7 @@ namespace RadialGunSelect
             Vector2 mousePosition = GetCenteredMousePosition();
             Vector2 lastMousePosition = mousePosition;
             dfLabel ammoLabel = new GameObject("RadialGunSelectLabel").AddComponent<dfLabel>();
+            float cachedGuiScale = 0.0f;
 
             // LOOP
             while (UIRoot.GetBool("m_metalGearGunSelectActive"))
@@ -186,8 +188,14 @@ namespace RadialGunSelect
                 }
 
                 // run update
-                foreach (var seg in segments)
-                    seg.Update();
+                float newGuiScale = GUIManager.PixelsToUnits();
+                if (newGuiScale != cachedGuiScale)
+                {
+                    cachedGuiScale = newGuiScale;
+                    float dfScale = GameUIUtility.GetCurrentTK2D_DFScale(GUIManager);
+                    foreach (var seg in segments)
+                        seg.Rescale(newGuiScale, dfScale);
+                }
 
                 UIRoot.GunventoryFolded = true;
                 yield return null;
