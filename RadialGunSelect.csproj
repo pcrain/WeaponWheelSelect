@@ -66,12 +66,13 @@
     <Reference Include="BepInEx">
       <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>/home/pretzel/workspace/gungy-cwaffing/bin/Debug/0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleCommandsManager.cs" />
-    <Compile Include="HooksManager.cs" />
     <Compile Include="RadialGunSelectController.cs" />
     <Compile Include="Utils\APIs\ItemAPI\CompanionBuilder.cs" />
     <Compile Include="Utils\APIs\ItemAPI\CustomSynergies.cs" />

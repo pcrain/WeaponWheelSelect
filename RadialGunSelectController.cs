@@ -6,6 +6,7 @@ using UnityEngine;
 using tk2dRuntime;
 using System.Collections.Generic;
 using InControl;
+using HarmonyLib;
 
 namespace RadialGunSelect
 {
@@ -13,7 +14,7 @@ namespace RadialGunSelect
     {
         public static Shader radialShader;
         public static RadialSegment[] segments;
-        static int hoveredIndex;
+        private static int hoveredIndex;
 
         public static void Init()
         {
@@ -25,6 +26,16 @@ namespace RadialGunSelect
 
             AssetBundle assetBundle = AssetsManager.LoadAssetBundleFromResource($"RadialGunSelect/AssetBundles/wwshaders-{platform}");
             radialShader = assetBundle.LoadAsset<Shader>("assets/weaponwheel.shader");
+        }
+
+        [HarmonyPatch(typeof(GameUIRoot), nameof(GameUIRoot.HandleMetalGearGunSelect)/*, MethodType.Enumerator*/)]
+        private class WeaponWheelPatch
+        {
+            private static bool Prefix(GameUIRoot __instance, PlayerController targetPlayer, int numToL, ref IEnumerator __result)
+            {
+                __result = RadialGunSelectController.HandleRadialGunSelect(targetPlayer, numToL);
+                return false; // skip original method
+            }
         }
 
         public static IEnumerator HandleRadialGunSelect(PlayerController targetPlayer, int numToL)
@@ -245,12 +256,6 @@ namespace RadialGunSelect
             return mousePosition;
         }
 
-
-
-
-
-
-
         // ---------------------------------------------------------------- \\
         //                                                                  \\
         // original method, with cleaned up obfuscation and variable names  \\
@@ -259,7 +264,7 @@ namespace RadialGunSelect
 
         // gungeon code is kinda sucky damn..
 
-        public static IEnumerator HandleMetalGearGunSelect(PlayerController targetPlayer, int numToL)
+        public static IEnumerator OriginalHandleMetalGearGunSelect(PlayerController targetPlayer, int numToL)
         {
             GameUIRoot UIRoot = GameUIRoot.Instance;
 

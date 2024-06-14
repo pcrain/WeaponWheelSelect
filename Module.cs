@@ -14,7 +14,7 @@ using BepInEx;
 // using Mono.Cecil.Cil; //Instruction
 // using SGUI;
 // using FullSerializer;
-// using HarmonyLib;
+using HarmonyLib;
 
 namespace RadialGunSelect
 {
@@ -35,10 +35,8 @@ namespace RadialGunSelect
         {
             try
             {
-                HooksManager.Init();
-                ConsoleCommandsManager.Init();
+                new Harmony(MOD_GUID).PatchAll();
                 RadialGunSelectController.Init();
-
                 MorphUtils.LogRainbow($"{MOD_NAME} v{VERSION} started successfully.");
             }
             catch (Exception e)
