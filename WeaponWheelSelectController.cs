@@ -13,6 +13,9 @@ namespace WeaponWheelSelect
         private const int _SEGMENT_SIZE = 201;
         internal static Shader radialShader;
 
+        private static RadialSegment[] segments = null;
+        private static dfLabel ammoLabel = null;
+
         public static void Init()
         {
             string platform =
@@ -52,6 +55,24 @@ namespace WeaponWheelSelect
                 __result = WeaponWheelSelectController.HandleWeaponWheelSelect(targetPlayer, numToL);
                 return false; // skip original method
             }
+        }
+
+        private static void CleanUpWeaponWheel(PlayerController targetPlayer, GameUIAmmoController ammoController)
+        {
+            foreach (RadialSegment seg in segments)
+                seg.Destroy();
+
+            if (ammoLabel != null)
+            {
+                // ammoLabel.Text = "";
+                UnityEngine.Object.Destroy(ammoLabel.gameObject);
+                ammoLabel = null;
+            }
+            Pixelator.Instance.fade = 1f;
+            BraveTime.ClearMultiplier(GameUIRoot.Instance.gameObject);
+            targetPlayer.ClearInputOverride("metal gear");
+            GameUIRoot.Instance.m_metalGearGunSelectActive = false;
+            ammoController.GunAmmoCountLabel.IsVisible = true;
         }
 
         private static IEnumerator HandleWeaponWheelSelect(PlayerController targetPlayer, int numToL)
@@ -100,10 +121,10 @@ namespace WeaponWheelSelect
             float ignoreStickTimer = 0f;
             Vector2 mousePosition = GetCenteredMousePosition();
             Vector2 lastMousePosition = mousePosition;
-            dfLabel ammoLabel = new GameObject("WeaponWheelSelectLabel").AddComponent<dfLabel>();
+            ammoLabel = new GameObject("WeaponWheelSelectLabel").AddComponent<dfLabel>();
             float cachedGuiScale = 0.0f;
-            RadialSegment[] segments = new RadialSegment[playerGuns.Count];
             int hoveredIndex = 0;
+            int numGuns = 0;
 
             // LOOP
             while (UIRoot.m_metalGearGunSelectActive)
@@ -125,13 +146,15 @@ namespace WeaponWheelSelect
                     yield return null;
 
                     // setup
-                    hoveredIndex = playerGuns.IndexOf(targetPlayer.CurrentGun);
-                    int gap = playerGuns.Count > 20 ? 0 : playerGuns.Count > 15 ? 2 : playerGuns.Count > 10 ? 5 : 10;
+                    numGuns = playerGuns.Count;  // cache after yield return null above on the off chance it changed
+                    segments = new RadialSegment[numGuns];
+                    hoveredIndex = Mathf.Clamp(playerGuns.IndexOf(targetPlayer.CurrentGun), 0, numGuns - 1);
+                    int gap = numGuns > 20 ? 0 : numGuns > 15 ? 2 : numGuns > 10 ? 5 : 10;
                     float dfScale = GameUIUtility.GetCurrentTK2D_DFScale(GUIManager);
-                    for (int i = 0; i < playerGuns.Count; i++)
+                    float angle = 360f / numGuns;
+                    for (int i = 0; i < numGuns; i++)
                     {
                         // spawn segment
-                        float angle = 360f / playerGuns.Count;
                         float rotation = i * angle;
                         RadialSegment segment = new RadialSegment(_SEGMENT_SIZE, angle - gap, rotation);
                         segments[i] = segment;
@@ -151,6 +174,13 @@ namespace WeaponWheelSelect
                     ammoLabel.Anchor = dfAnchorStyle.CenterHorizontal | dfAnchorStyle.CenterVertical;
 
                     gunSelectPhase = Tribool.Ready;
+                }
+
+                // if our inventory changes while the weapon wheel is active, bail out FAST
+                if (numGuns != playerGuns.Count)
+                {
+                    CleanUpWeaponWheel(targetPlayer, ammoController);
+                    yield break;
                 }
 
                 // HANDLE INPUT
@@ -235,20 +265,12 @@ namespace WeaponWheelSelect
                 UIRoot.TemporarilyShowGunName(targetPlayer.IsPrimaryPlayer);
             }
 
-            // return everything to normal
-            foreach (RadialSegment seg in segments)
-                seg.Destroy();
-
-            ammoLabel.Text = "";
-            Pixelator.Instance.fade = 1f;
-            BraveTime.ClearMultiplier(UIRoot.gameObject);
-            targetPlayer.ClearInputOverride("metal gear");
-            UIRoot.m_metalGearGunSelectActive = false;
 
             if (totalGunShift == 0 && totalTimeMetalGeared < 0.005f)
                 targetPlayer.DoQuickEquip();
 
-            ammoController.GunAmmoCountLabel.IsVisible = true;
+            CleanUpWeaponWheel(targetPlayer, ammoController);
+
             yield break;
         }
     }

@@ -1,4 +1,9 @@
-4# Changelog
+# Changelog
+
+## 2.0.1 (2024-06-15)
+
+- Hopefully plugged an IndexOutOfRangeException
+- Made Weapon Wheel gracefully selfdestruct if the player's gun inventory changes while it's open
 
 ## 2.0.0 (2024-06-14)
 
