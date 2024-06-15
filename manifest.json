@@ -1,0 +1,9 @@
+{
+  "name": "WeaponWheel2",
+  "version_number": "2.0.0",
+  "website_url": "https://github.com/pcrain/WeaponWheelSelect",
+  "description": "Enhanced port of the original Weapon Wheel Select mod",
+  "dependencies": [
+    "MtG_API-Mod_the_Gungeon_API-1.7.0"
+  ]
+}

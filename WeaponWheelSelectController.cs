@@ -6,9 +6,9 @@ using HarmonyLib;
 using UnityEngine;
 using InControl;
 
-namespace RadialGunSelect
+namespace WeaponWheelSelect
 {
-    public static class RadialGunSelectController
+    public static class WeaponWheelSelectController
     {
         private const int _SEGMENT_SIZE = 201;
         internal static Shader radialShader;
@@ -18,7 +18,7 @@ namespace RadialGunSelect
             string platform =
                 Application.platform == RuntimePlatform.LinuxPlayer ? "linux" :
                 Application.platform == RuntimePlatform.OSXPlayer ? "osx" : "windows";
-            AssetBundle assetBundle = LoadAssetBundleFromResource($"RadialGunSelect.AssetBundles.wwshaders-{platform}");
+            AssetBundle assetBundle = LoadAssetBundleFromResource($"WeaponWheelSelect.AssetBundles.wwshaders-{platform}");
             radialShader = assetBundle.LoadAsset<Shader>("assets/weaponwheel.shader");
         }
 
@@ -49,12 +49,12 @@ namespace RadialGunSelect
         {
             private static bool Prefix(GameUIRoot __instance, PlayerController targetPlayer, int numToL, ref IEnumerator __result)
             {
-                __result = RadialGunSelectController.HandleRadialGunSelect(targetPlayer, numToL);
+                __result = WeaponWheelSelectController.HandleWeaponWheelSelect(targetPlayer, numToL);
                 return false; // skip original method
             }
         }
 
-        private static IEnumerator HandleRadialGunSelect(PlayerController targetPlayer, int numToL)
+        private static IEnumerator HandleWeaponWheelSelect(PlayerController targetPlayer, int numToL)
         {
             GameUIRoot UIRoot = GameUIRoot.Instance;
             dfGUIManager GUIManager = UIRoot.m_manager;
@@ -100,7 +100,7 @@ namespace RadialGunSelect
             float ignoreStickTimer = 0f;
             Vector2 mousePosition = GetCenteredMousePosition();
             Vector2 lastMousePosition = mousePosition;
-            dfLabel ammoLabel = new GameObject("RadialGunSelectLabel").AddComponent<dfLabel>();
+            dfLabel ammoLabel = new GameObject("WeaponWheelSelectLabel").AddComponent<dfLabel>();
             float cachedGuiScale = 0.0f;
             RadialSegment[] segments = new RadialSegment[playerGuns.Count];
             int hoveredIndex = 0;

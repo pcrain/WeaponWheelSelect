@@ -2,14 +2,14 @@
 using BepInEx;
 using HarmonyLib;
 
-namespace RadialGunSelect
+namespace WeaponWheelSelect
 {
     [BepInPlugin(Module.MOD_GUID, Module.MOD_NAME, Module.MOD_VERSION)]
     [BepInDependency(ETGModMainBehaviour.GUID)]
     public class Module : BaseUnityPlugin
     {
         public const string MOD_GUID = "pretzel.etg.weaponwheel";
-        public const string MOD_NAME = "Weapon Wheel Select"; // referred to as RadialGunSelect internally
+        public const string MOD_NAME = "Weapon Wheel Select"; // referred to as WeaponWheelSelect internally
         public const string MOD_VERSION = "2.0.0";
 
         public void Start()
@@ -22,7 +22,7 @@ namespace RadialGunSelect
             try
             {
                 new Harmony(MOD_GUID).PatchAll();
-                RadialGunSelectController.Init();
+                WeaponWheelSelectController.Init();
                 ETGModConsole.Log($"<color=#8888BB>{MOD_NAME} v{MOD_VERSION} started successfully!</color>");
             }
             catch (Exception e)

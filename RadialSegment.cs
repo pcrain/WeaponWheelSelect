@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace RadialGunSelect
+namespace WeaponWheelSelect
 {
     internal class RadialSegment
     {
@@ -33,7 +33,7 @@ namespace RadialGunSelect
             segGO.transform.localScale = GUIManager.PixelsToUnits() * 3f * size * Vector2.one;
             segGO.transform.localPosition = Vector3.zero;
 
-            Material material = new Material(RadialGunSelectController.radialShader);
+            Material material = new Material(WeaponWheelSelectController.radialShader);
             material.SetFloat("_Resolution", size);
             material.SetFloat("_Angle", angle);
             material.SetFloat("_Rotation", rotation);
