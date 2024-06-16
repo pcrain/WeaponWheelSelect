@@ -170,7 +170,12 @@ namespace WeaponWheelSelect
                     ammoLabel.TextAlignment = TextAlignment.Center;
                     ammoLabel.BackgroundColor = Color.blue.WithAlpha(0.5f);
                     //TODO: make this mirror actual ammo display
-                    ammoLabel.Text = targetPlayer.CurrentGun.InfiniteAmmo ? "" : targetPlayer.CurrentGun.ammo + "/" + targetPlayer.CurrentGun.AdjustedMaxAmmo;
+
+                    ammoLabel.ProcessMarkup = true;
+                    ammoLabel.ColorizeSymbols = false;
+                    ammoLabel.Text = targetPlayer.CurrentGun.InfiniteAmmo
+                        ? "[sprite \"infinite-big\"]"
+                        : targetPlayer.CurrentGun.ammo + "/" + targetPlayer.CurrentGun.AdjustedMaxAmmo;
                     ammoLabel.Anchor = dfAnchorStyle.CenterHorizontal | dfAnchorStyle.CenterVertical;
 
                     gunSelectPhase = Tribool.Ready;
@@ -233,7 +238,9 @@ namespace WeaponWheelSelect
                     segments[hoveredIndex].SetHovered(false);
                     segments[targetIndex].SetHovered(true);
                     hoveredIndex = targetIndex;
-                    ammoLabel.Text = playerGuns[targetIndex].InfiniteAmmo ? "" : playerGuns[targetIndex].ammo + "/" + playerGuns[targetIndex].AdjustedMaxAmmo;
+                    ammoLabel.Text = playerGuns[targetIndex].InfiniteAmmo
+                        ? "[sprite \"infinite-big\"]"
+                        : playerGuns[targetIndex].ammo + "/" + playerGuns[targetIndex].AdjustedMaxAmmo;
                 }
 
                 // run update
