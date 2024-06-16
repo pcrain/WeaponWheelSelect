@@ -193,15 +193,14 @@ namespace WeaponWheelSelect
 
                 mousePosition = GetCenteredMousePosition(); //TODO: make this work for co-op
 
-                float mouseAngle = BraveMathCollege.ClampAngle360(Mathf.Atan2(mousePosition.x, mousePosition.y) * Mathf.Rad2Deg);
-
-                float segmentWidth = GUIManager.UIScale * 3f * _SEGMENT_SIZE / 2f;
-                if (Vector2.Distance(mousePosition, lastMousePosition) >= 4f)
+                if ((lastMousePosition - mousePosition).sqrMagnitude >= 16f)
                 {
+                    float segmentWidth = GUIManager.UIScale * 3f * _SEGMENT_SIZE / 2f;
                     if (mousePosition.magnitude > segmentWidth * 0.25f)
                     {
-                        float anglePerSegment = 360f / segments.Length;
-                        targetIndex = Mathf.FloorToInt((mouseAngle + 90) / anglePerSegment + 0.5f);
+                        //NOTE: uses -x in Atan2 since shader is flipped for some reason
+                        float mouseAngle = BraveMathCollege.ClampAngle360(Mathf.Atan2(mousePosition.y, -mousePosition.x) * Mathf.Rad2Deg);
+                        targetIndex = Mathf.FloorToInt(0.5f + (segments.Length * mouseAngle) / 360f);
                     }
                     lastMousePosition = mousePosition;
                 }
@@ -223,7 +222,7 @@ namespace WeaponWheelSelect
                     else if (ignoreStickTimer <= 0f && Vector2.Distance(Vector2.zero, currentDevice.LeftStick.Value) >= 0.4f)
                     {
                         float anglePerSegment = 360f / segments.Length;
-                        targetIndex = Mathf.FloorToInt((-currentDevice.LeftStick.Angle - 90) / anglePerSegment + 0.5f);
+                        targetIndex = Mathf.FloorToInt((-currentDevice.LeftStick.Angle + 270) / anglePerSegment + 0.5f);
                     }
                 }
 

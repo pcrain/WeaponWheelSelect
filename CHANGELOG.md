@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.2 (2024-06-15)
+- Almost certainly plugged an IndexOutOfRangeException for real this time
+
 ## 2.0.1 (2024-06-15)
 
 - Hopefully plugged an IndexOutOfRangeException

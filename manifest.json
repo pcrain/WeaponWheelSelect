@@ -1,6 +1,6 @@
 {
   "name": "WeaponWheel2",
-  "version_number": "2.0.1",
+  "version_number": "2.0.2",
   "website_url": "https://github.com/pcrain/WeaponWheelSelect",
   "description": "Enhanced port of the original Weapon Wheel Select mod",
   "dependencies": [
