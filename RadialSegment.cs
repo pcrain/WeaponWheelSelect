@@ -4,8 +4,8 @@ namespace WeaponWheelSelect
 {
     internal class RadialSegment
     {
-        private static readonly Color unhoveredOutlineColor = new Color(96 / 255f, 96 / 255f, 101 / 255f);
-        private static readonly Color hoveredOutlineColor = Color.white;
+        private static readonly bool USE_COLOR = true;
+
         private static readonly Color innerColor = Color.black.WithAlpha(0.5f);
 
         private Transform container;
@@ -14,6 +14,8 @@ namespace WeaponWheelSelect
         private tk2dClippedSprite gunSprite;
         private float resolution;
         private Vector3 basePos;
+        private Color hoveredOutlineColor;
+        private Color unhoveredOutlineColor;
 
         internal RadialSegment(float size, float angle, float rotation)
         {
@@ -32,6 +34,17 @@ namespace WeaponWheelSelect
             segGO.transform.parent = container;
             segGO.transform.localScale = GUIManager.PixelsToUnits() * 3f * size * Vector2.one;
             segGO.transform.localPosition = Vector3.zero;
+
+            if (USE_COLOR)
+            {
+                hoveredOutlineColor = HSBColor.ToColor(new HSBColor(rotation / 360f, 0.75f, 0.75f));
+                unhoveredOutlineColor = HSBColor.ToColor(new HSBColor(rotation / 360f, 0.25f, 0.25f));
+            }
+            else
+            {
+                hoveredOutlineColor = Color.white;
+                unhoveredOutlineColor = new Color(96 / 255f, 96 / 255f, 101 / 255f);
+            }
 
             Material material = new Material(WeaponWheelSelectController.radialShader);
             material.SetFloat("_Resolution", size);
