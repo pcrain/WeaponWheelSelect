@@ -15,6 +15,7 @@ namespace WeaponWheelSelect
 
         private static RadialSegment[] segments = null;
         private static dfLabel ammoLabel = null;
+        private static bool weaponWheelActive = false;
 
         public static void Init()
         {
@@ -73,10 +74,15 @@ namespace WeaponWheelSelect
             targetPlayer.ClearInputOverride("metal gear");
             GameUIRoot.Instance.m_metalGearGunSelectActive = false;
             ammoController.GunAmmoCountLabel.IsVisible = true;
+            weaponWheelActive = false;
         }
 
         private static IEnumerator HandleWeaponWheelSelect(PlayerController targetPlayer, int numToL)
         {
+            if (weaponWheelActive)
+                yield break; // don't allow multiple players to have weapon wheel active at the same time
+
+            weaponWheelActive = true;
             GameUIRoot UIRoot = GameUIRoot.Instance;
             dfGUIManager GUIManager = UIRoot.m_manager;
 
