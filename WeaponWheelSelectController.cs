@@ -111,8 +111,7 @@ namespace WeaponWheelSelect
             BraveTime.RegisterTimeScaleMultiplier(0.05f, UIRoot.gameObject);
             UIRoot.m_metalGearGunSelectActive = true;
             Tribool gunSelectPhase = Tribool.Unready;
-            GunInventory playerInventory = targetPlayer.inventory;
-            List<Gun> playerGuns = playerInventory.AllGuns;
+            List<Gun> playerGuns = targetPlayer.inventory.AllGuns;
 
             // no guns
             if (playerGuns.Count <= 1)
@@ -123,7 +122,6 @@ namespace WeaponWheelSelect
 
             float totalTimeMetalGeared = 0f;
             Pixelator.Instance.FadeColor = Color.black;
-            int totalGunShift = 0;
             float ignoreStickTimer = 0f;
             Vector2 mousePosition = GetCenteredMousePosition();
             Vector2 lastMousePosition = mousePosition;
@@ -206,8 +204,8 @@ namespace WeaponWheelSelect
 
                 if ((lastMousePosition - mousePosition).sqrMagnitude >= 16f)
                 {
-                    float segmentWidth = GUIManager.UIScale * 3f * _SEGMENT_SIZE / 2f;
-                    if (mousePosition.magnitude > segmentWidth * 0.25f)
+                    float segmentWidth = GUIManager.UIScale * RadialSegment.SEG_SCALE * _SEGMENT_SIZE;
+                    if (mousePosition.magnitude > segmentWidth)
                     {
                         //NOTE: uses -x in Atan2 since shader is flipped for some reason
                         float mouseAngle = BraveMathCollege.ClampAngle360(Mathf.Atan2(mousePosition.y, -mousePosition.x) * Mathf.Rad2Deg);
@@ -278,7 +276,7 @@ namespace WeaponWheelSelect
             }
 
 
-            if (totalGunShift == 0 && totalTimeMetalGeared < 0.005f)
+            if (totalTimeMetalGeared < 0.005f)
                 targetPlayer.DoQuickEquip();
 
             CleanUpWeaponWheel(targetPlayer, ammoController);

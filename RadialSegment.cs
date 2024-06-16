@@ -4,6 +4,7 @@ namespace WeaponWheelSelect
 {
     internal class RadialSegment
     {
+        internal const float SEG_SCALE = 0.375f;
         private static readonly bool USE_COLOR = true;
 
         private static readonly Color innerColor = Color.black.WithAlpha(0.5f);
@@ -27,7 +28,7 @@ namespace WeaponWheelSelect
             container.SetAsFirstSibling();
 
             float adjustedRot = (-rotation - 90) * Mathf.Deg2Rad;
-            this.basePos = new Vector3(0.375f * Mathf.Sin(adjustedRot), 0.375f * Mathf.Cos(adjustedRot));
+            this.basePos = new Vector3(SEG_SCALE * Mathf.Sin(adjustedRot), SEG_SCALE * Mathf.Cos(adjustedRot));
             this.resolution = size;
 
             GameObject segGO = GameObject.CreatePrimitive(PrimitiveType.Quad);
