@@ -53,6 +53,9 @@ namespace WeaponWheelSelect
         {
             private static bool Prefix(GameUIRoot __instance, PlayerController targetPlayer, int numToL, ref IEnumerator __result)
             {
+                if (!OptionalGunfig.WheelEnabled())
+                    return true; // call original method
+
                 __result = WeaponWheelSelectController.HandleWeaponWheelSelect(targetPlayer, numToL);
                 return false; // skip original method
             }
