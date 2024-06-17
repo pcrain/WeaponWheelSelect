@@ -80,6 +80,20 @@ namespace WeaponWheelSelect
             weaponWheelActive = false;
         }
 
+        private static string FormatWeaponText(Gun gun, bool showAmmo, bool showName)
+        {
+            if (showAmmo && showName)
+            {
+                string ammo = gun.InfiniteAmmo
+                    ? "[sprite \"infinite-big\"]"
+                    : $"{gun.ammo}/{gun.AdjustedMaxAmmo}";
+                return $"{ammo}\n{gun.EncounterNameOrDisplayName}";
+            }
+            if (showAmmo)
+                return (gun.InfiniteAmmo ? "[sprite \"infinite-big\"]" : $"{gun.ammo}/{gun.AdjustedMaxAmmo}");
+            return showName ? gun.EncounterNameOrDisplayName : "";
+        }
+
         private static IEnumerator HandleWeaponWheelSelect(PlayerController targetPlayer, int numToL)
         {
             if (weaponWheelActive)
@@ -132,6 +146,10 @@ namespace WeaponWheelSelect
             float cachedGuiScale = 0.0f;
             int hoveredIndex = 0;
             int numGuns = 0;
+            bool showAmmo = OptionalGunfig.AmmoEnabled();
+            bool showName = OptionalGunfig.NameEnabled();
+            bool smallLabel = showAmmo && !showName;
+            int labelHeight = smallLabel ? 64 : 192;
 
             // LOOP
             while (UIRoot.m_metalGearGunSelectActive)
@@ -178,7 +196,7 @@ namespace WeaponWheelSelect
                     }
 
                     ammoLabel.transform.parent = GUIManager.transform;
-                    ammoLabel.Size = new Vector2(500, 64);  //TODO: make this work for co-op
+                    ammoLabel.Size = new Vector2(256, labelHeight);  //TODO: make this work for co-op
                     ammoLabel.TextScale *= 3;
                     ammoLabel.TextAlignment = TextAlignment.Center;
                     ammoLabel.BackgroundColor = Color.blue.WithAlpha(0.5f);
@@ -186,10 +204,13 @@ namespace WeaponWheelSelect
 
                     ammoLabel.ProcessMarkup = true;
                     ammoLabel.ColorizeSymbols = false;
-                    ammoLabel.Text = targetPlayer.CurrentGun.InfiniteAmmo
-                        ? "[sprite \"infinite-big\"]"
-                        : targetPlayer.CurrentGun.ammo + "/" + targetPlayer.CurrentGun.AdjustedMaxAmmo;
+                    ammoLabel.WordWrap = true;
+
+                    ammoLabel.Text = FormatWeaponText(targetPlayer.CurrentGun, showAmmo, showName);
                     ammoLabel.Anchor = dfAnchorStyle.CenterHorizontal | dfAnchorStyle.CenterVertical;
+                    if (!smallLabel)
+                        ammoLabel.Position += new Vector3(0, -32, 0);
+                    // ammoLabel.RelativePosition = new Vector3(0, 164, 0);
 
                     gunSelectPhase = Tribool.Ready;
                 }
@@ -251,9 +272,7 @@ namespace WeaponWheelSelect
                     segments[hoveredIndex].SetHovered(false);
                     segments[targetIndex].SetHovered(true);
                     hoveredIndex = targetIndex;
-                    ammoLabel.Text = playerGuns[targetIndex].InfiniteAmmo
-                        ? "[sprite \"infinite-big\"]"
-                        : playerGuns[targetIndex].ammo + "/" + playerGuns[targetIndex].AdjustedMaxAmmo;
+                    ammoLabel.Text = FormatWeaponText(playerGuns[targetIndex], showAmmo, showName);
                 }
 
                 // run update

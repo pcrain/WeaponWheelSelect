@@ -12,6 +12,8 @@ namespace WeaponWheelSelect
     private const string GUNFIG_MOD_ENABLED = "Enable Weapon Wheel";
     private const string GUNFIG_USE_COLOR = "Use Colors";
     private const string GUNFIG_HIGHLIGHT = "Use Different Background Color for Current Gun";
+    private const string GUNFIG_SHOW_AMMO = "Display Gun Ammo";
+    private const string GUNFIG_SHOW_NAME = "Display Gun Name";
     private static readonly Color GunmetalBlue = new Color(.533f, .533f, .733f, 1f);
 
     private static bool DefaultFalse() => false;
@@ -20,11 +22,15 @@ namespace WeaponWheelSelect
     internal static Func<bool> WheelEnabled = DefaultTrue;
     internal static Func<bool> ColorEnabled = DefaultFalse;
     internal static Func<bool> HighlightEnabled = DefaultFalse;
+    internal static Func<bool> AmmoEnabled = DefaultTrue;
+    internal static Func<bool> NameEnabled = DefaultFalse;
 
     private static Func<string, bool> GunfigEnabled = null;
     private static bool WheelEnabledGunfig() => GunfigEnabled(GUNFIG_MOD_ENABLED);
     private static bool ColorEnabledGunfig() => GunfigEnabled(GUNFIG_USE_COLOR);
     private static bool HighlightEnabledGunfig() => GunfigEnabled(GUNFIG_HIGHLIGHT);
+    private static bool AmmoEnabledGunfig() => GunfigEnabled(GUNFIG_SHOW_AMMO);
+    private static bool NameEnabledGunfig() => GunfigEnabled(GUNFIG_SHOW_NAME);
 
     internal static void Init()
     {
@@ -56,10 +62,27 @@ namespace WeaponWheelSelect
                 /*callback*/   null,
                 /*updateType*/ 1 /*OnConfirm*/
             });
+            gunfigType.GetMethod("AddToggle").Invoke(Gunfig, new object[]{
+                /*key*/        GUNFIG_SHOW_AMMO,
+                /*enabled*/    true,
+                /*label*/      null,
+                /*callback*/   null,
+                /*updateType*/ 1 /*OnConfirm*/
+            });
+
+            gunfigType.GetMethod("AddToggle").Invoke(Gunfig, new object[]{
+                /*key*/        GUNFIG_SHOW_NAME,
+                /*enabled*/    false,
+                /*label*/      null,
+                /*callback*/   null,
+                /*updateType*/ 1 /*OnConfirm*/
+            });
             GunfigEnabled = (Func<string, bool>)Delegate.CreateDelegate(typeof(Func<string, bool>), Gunfig, gunfigType.GetMethod("Enabled"));
             WheelEnabled = WheelEnabledGunfig;
             ColorEnabled = ColorEnabledGunfig;
             HighlightEnabled = HighlightEnabledGunfig;
+            AmmoEnabled = AmmoEnabledGunfig;
+            NameEnabled = NameEnabledGunfig;
             break;
         }
     }
