@@ -10,7 +10,7 @@ namespace WeaponWheelSelect
     {
         public const string MOD_GUID = "pretzel.etg.weaponwheel";
         public const string MOD_NAME = "Weapon Wheel Select"; // referred to as WeaponWheelSelect internally
-        public const string MOD_VERSION = "2.0.2";
+        public const string MOD_VERSION = "2.1.0";
         public void Start()
         {
             ETGModMainBehaviour.WaitForGameManagerStart(GMStart);

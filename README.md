@@ -7,6 +7,7 @@ An updated port of the original [Weapon Wheel Select mod by Morphious86](https:/
 - Modernized code for BepinEX: now uses Harmony for patching and publicized fields for reflection
 - Shaders have been rewritten and recompiled to work on MacOS and Linux as well as Windows
 - Memory usage has been optimized and a handful of potential memory leaks have been fixed
+- Several configuration options are now available via the Mod Config menu (requires [Gunfig](https://thunderstore.io/c/enter-the-gungeon/p/CaptainPretzel/Gunfig/) to be installed)
 
 ## Credits
 

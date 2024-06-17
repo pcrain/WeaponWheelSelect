@@ -41,42 +41,13 @@ namespace WeaponWheelSelect
             Type gunfigType = assembly.GetType("Gunfiguration.Gunfig");
             string coloredModName = (string)assembly.GetType("Gunfiguration.GunfigHelpers").GetMethod("WithColor").Invoke(null, new object[]{Module.MOD_NAME, GunmetalBlue});
             object Gunfig = gunfigType.GetMethod("Get").Invoke(null, new object[]{coloredModName});
-            gunfigType.GetMethod("AddToggle").Invoke(Gunfig, new object[]{
-                /*key*/        GUNFIG_MOD_ENABLED,
-                /*enabled*/    true,
-                /*label*/      null,
-                /*callback*/   null,
-                /*updateType*/ 1 /*OnConfirm*/
-            });
-            gunfigType.GetMethod("AddToggle").Invoke(Gunfig, new object[]{
-                /*key*/        GUNFIG_USE_COLOR,
-                /*enabled*/    false,
-                /*label*/      null,
-                /*callback*/   null,
-                /*updateType*/ 1 /*OnConfirm*/
-            });
-            gunfigType.GetMethod("AddToggle").Invoke(Gunfig, new object[]{
-                /*key*/        GUNFIG_HIGHLIGHT,
-                /*enabled*/    false,
-                /*label*/      null,
-                /*callback*/   null,
-                /*updateType*/ 1 /*OnConfirm*/
-            });
-            gunfigType.GetMethod("AddToggle").Invoke(Gunfig, new object[]{
-                /*key*/        GUNFIG_SHOW_AMMO,
-                /*enabled*/    true,
-                /*label*/      null,
-                /*callback*/   null,
-                /*updateType*/ 1 /*OnConfirm*/
-            });
-
-            gunfigType.GetMethod("AddToggle").Invoke(Gunfig, new object[]{
-                /*key*/        GUNFIG_SHOW_NAME,
-                /*enabled*/    false,
-                /*label*/      null,
-                /*callback*/   null,
-                /*updateType*/ 1 /*OnConfirm*/
-            });
+            MethodInfo addToggle = gunfigType.GetMethod("AddToggle");
+            // Gunfig.AddToggle(key, enabled, label, callback, updateType)
+            addToggle.Invoke(Gunfig, new object[]{ GUNFIG_MOD_ENABLED, true,  null, null, 1 /*OnConfirm*/ });
+            addToggle.Invoke(Gunfig, new object[]{ GUNFIG_USE_COLOR,   false, null, null, 1 /*OnConfirm*/ });
+            addToggle.Invoke(Gunfig, new object[]{ GUNFIG_HIGHLIGHT,   false, null, null, 1 /*OnConfirm*/ });
+            addToggle.Invoke(Gunfig, new object[]{ GUNFIG_SHOW_AMMO,   true,  null, null, 1 /*OnConfirm*/ });
+            addToggle.Invoke(Gunfig, new object[]{ GUNFIG_SHOW_NAME,   false, null, null, 1 /*OnConfirm*/ });
             GunfigEnabled = (Func<string, bool>)Delegate.CreateDelegate(typeof(Func<string, bool>), Gunfig, gunfigType.GetMethod("Enabled"));
             WheelEnabled = WheelEnabledGunfig;
             ColorEnabled = ColorEnabledGunfig;
