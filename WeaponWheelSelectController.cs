@@ -156,11 +156,12 @@ namespace WeaponWheelSelect
                     int gap = numGuns > 20 ? 0 : numGuns > 15 ? 2 : numGuns > 10 ? 5 : 10;
                     float dfScale = GameUIUtility.GetCurrentTK2D_DFScale(GUIManager);
                     float angle = 360f / numGuns;
+                    bool useColor = OptionalGunfig.ColorEnabled();
                     for (int i = 0; i < numGuns; i++)
                     {
                         // spawn segment
                         float rotation = i * angle;
-                        RadialSegment segment = new RadialSegment(_SEGMENT_SIZE, angle - gap, rotation);
+                        RadialSegment segment = new RadialSegment(_SEGMENT_SIZE, angle - gap, rotation, useColor);
                         segments[i] = segment;
 
                         // set gun to segment

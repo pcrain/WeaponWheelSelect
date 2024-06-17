@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <FrameworkPathOverride>/home/pretzel/workspace/gungy-cwaffing/_dotNETFramework/v3.5</FrameworkPathOverride>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,6 +69,7 @@
   <ItemGroup>
     <Compile Include="WeaponWheelSelectController.cs" />
     <Compile Include="RadialSegment.cs" />
+    <Compile Include="OptionalGunfig.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

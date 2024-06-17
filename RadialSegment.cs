@@ -5,7 +5,6 @@ namespace WeaponWheelSelect
     internal class RadialSegment
     {
         internal const float SEG_SCALE = 0.375f;
-        private static readonly bool USE_COLOR = true;
 
         private static readonly Color innerColor = Color.black.WithAlpha(0.5f);
 
@@ -18,7 +17,7 @@ namespace WeaponWheelSelect
         private Color hoveredOutlineColor;
         private Color unhoveredOutlineColor;
 
-        internal RadialSegment(float size, float angle, float rotation)
+        internal RadialSegment(float size, float angle, float rotation, bool useColor)
         {
             dfGUIManager GUIManager = GameUIRoot.Instance.m_manager;
 
@@ -36,9 +35,9 @@ namespace WeaponWheelSelect
             segGO.transform.localScale = GUIManager.PixelsToUnits() * 3f * size * Vector2.one;
             segGO.transform.localPosition = Vector3.zero;
 
-            if (USE_COLOR)
+            if (useColor)
             {
-                hoveredOutlineColor = HSBColor.ToColor(new HSBColor(rotation / 360f, 0.75f, 0.75f));
+                hoveredOutlineColor = HSBColor.ToColor(new HSBColor(rotation / 360f, 0.75f, 0.95f));
                 unhoveredOutlineColor = HSBColor.ToColor(new HSBColor(rotation / 360f, 0.25f, 0.25f));
             }
             else
