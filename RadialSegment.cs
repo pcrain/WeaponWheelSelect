@@ -7,6 +7,7 @@ namespace WeaponWheelSelect
         internal const float SEG_SCALE = 0.375f;
 
         private static readonly Color innerColor = Color.black.WithAlpha(0.5f);
+        private static readonly Color currentColor = Color.white.WithAlpha(0.15f);
 
         private Transform container;
         private MeshRenderer renderer;
@@ -17,7 +18,7 @@ namespace WeaponWheelSelect
         private Color hoveredOutlineColor;
         private Color unhoveredOutlineColor;
 
-        internal RadialSegment(float size, float angle, float rotation, bool useColor)
+        internal RadialSegment(float size, float angle, float rotation, bool useColor, bool current)
         {
             dfGUIManager GUIManager = GameUIRoot.Instance.m_manager;
 
@@ -50,7 +51,7 @@ namespace WeaponWheelSelect
             material.SetFloat("_Resolution", size);
             material.SetFloat("_Angle", angle);
             material.SetFloat("_Rotation", rotation);
-            material.SetColor("_Color", innerColor);
+            material.SetColor("_Color", current ? currentColor : innerColor);
             material.SetColor("_OutlineColor", unhoveredOutlineColor);
             material.SetFloat("_OutlineWidth", 1f);
             material.SetFloat("_LowBound", 0.25f);

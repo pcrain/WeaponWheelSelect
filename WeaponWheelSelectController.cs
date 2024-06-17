@@ -164,7 +164,12 @@ namespace WeaponWheelSelect
                     {
                         // spawn segment
                         float rotation = i * angle;
-                        RadialSegment segment = new RadialSegment(_SEGMENT_SIZE, angle - gap, rotation, useColor);
+                        RadialSegment segment = new RadialSegment(
+                            size: _SEGMENT_SIZE,
+                            angle: angle - gap,
+                            rotation: rotation,
+                            useColor: useColor,
+                            current: (i == hoveredIndex) && OptionalGunfig.HighlightEnabled());
                         segments[i] = segment;
 
                         // set gun to segment
